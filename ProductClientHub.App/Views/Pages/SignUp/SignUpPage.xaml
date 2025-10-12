@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="ProductClientHub.App.Views.Pages.SignUp.SignUpPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModel="clr-namespace:ProductClientHub.App.ViewModels.Pages.SignUp"
+    x:DataType="viewModel:SignUpViewModel"
+    Shell.NavBarIsVisible="True">
+
+
+    <VerticalStackLayout Spacing="20">
+
+        <Label
+            Margin="0,0,0,20"
+            Style="{StaticResource SubHeadline}"
+            Text="Create Your Account" />
+
+        <Label
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center"
+            Style="{StaticResource BodyText}"
+            Text="Join us and start managing your clients" />
+
+        <!--  Name Field  -->
+        <VerticalStackLayout Margin="0,20,0,0" Spacing="8">
+            <Label Style="{StaticResource FormFieldLabel}" Text="Full Name" />
+            <Border Style="{StaticResource FormFieldBorder}">
+                <Entry
+                    Placeholder="Enter your full name"
+                    Style="{StaticResource FormFieldEntry}"
+                    Text="{Binding Model.Name}" />
+            </Border>
+        </VerticalStackLayout>
+
+        <!--  Email Field  -->
+        <VerticalStackLayout Spacing="8">
+            <Label Style="{StaticResource FormFieldLabel}" Text="Email Address" />
+            <Border Style="{StaticResource FormFieldBorder}">
+                <Entry
+                    Keyboard="Email"
+                    Placeholder="Enter your email"
+                    Style="{StaticResource FormFieldEntry}"
+                    Text="{Binding Model.Email}" />
+            </Border>
+        </VerticalStackLayout>
+
+        <!--  Password Field  -->
+        <VerticalStackLayout Spacing="8">
+            <Label Style="{StaticResource FormFieldLabel}" Text="Password" />
+            <Border Style="{StaticResource FormFieldBorder}">
+                <Entry
+                    IsPassword="True"
+                    Placeholder="Enter your password (min. 6 characters)"
+                    Style="{StaticResource FormFieldEntry}"
+                    Text="{Binding Model.Password}" />
+            </Border>
+        </VerticalStackLayout>
+
+        <!--  Confirm Password Field  -->
+        <VerticalStackLayout Spacing="8">
+            <Label Style="{StaticResource FormFieldLabel}" Text="Confirm Password" />
+            <Border Style="{StaticResource FormFieldBorder}">
+                <Entry
+                    IsPassword="True"
+                    Placeholder="Confirm your password"
+                    Style="{StaticResource FormFieldEntry}"
+                    Text="{Binding Model.ConfirmPassword}" />
+            </Border>
+        </VerticalStackLayout>
+
+        <!--  Error Message Label  -->
+        <Label
+            FontFamily="InterMedium"
+            FontSize="14"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center"
+            IsVisible="{Binding Model.IsErrorVisible}"
+            Text="{Binding Model.ErrorMessage}"
+            TextColor="Red" />
+
+        <!--  Sign Up Button  -->
+        <Button
+            Margin="0,20,0,20"
+            BackgroundColor="Black"
+            Command="{Binding SignUpCommand}"
+            CornerRadius="20"
+            FontFamily="InterBold"
+            HeightRequest="60"
+            Text="Create Account"
+            TextColor="White"
+            TextTransform="None" />
+
+        <!--  Already have account  -->
+        <Label FontSize="15" HorizontalOptions="Center">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding NavigateToLoginCommand}" />
+            </Label.GestureRecognizers>
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span FontFamily="InterMedium" Text="Already have an account?" />
+                    <Span Text=" " />
+                    <Span
+                        FontFamily="InterBold"
+                        Text="Login here"
+                        TextColor="#7237BA" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+    </VerticalStackLayout>
+
+</ContentPage>

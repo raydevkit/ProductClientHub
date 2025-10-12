@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="ProductClientHub.App.Views.Pages.Login.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModel="clr-namespace:ProductClientHub.App.ViewModels.Pages.Login"
+    x:DataType="viewModel:LoginViewModel"
+    Shell.NavBarIsVisible="True">
+
+    <VerticalStackLayout Spacing="20">
+
+        <Label
+            Margin="0,20,0,10"
+            Style="{StaticResource SubHeadline}"
+            Text="Welcome Back" />
+
+        <Label
+            Margin="0,0,0,20"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center"
+            Style="{StaticResource BodyText}"
+            Text="Sign in to your account" />
+
+        <!--  Email Field  -->
+        <VerticalStackLayout Spacing="8">
+            <Label Style="{StaticResource FormFieldLabel}" Text="Email Address" />
+            <Border Style="{StaticResource FormFieldBorder}">
+                <Entry
+                    Keyboard="Email"
+                    Placeholder="Enter your email"
+                    Style="{StaticResource FormFieldEntry}"
+                    Text="{Binding Model.Email}" />
+            </Border>
+        </VerticalStackLayout>
+
+        <!--  Password Field  -->
+        <VerticalStackLayout Spacing="8">
+            <Label Style="{StaticResource FormFieldLabel}" Text="Password" />
+            <Border Style="{StaticResource FormFieldBorder}">
+                <Entry
+                    IsPassword="True"
+                    Placeholder="Enter your password"
+                    Style="{StaticResource FormFieldEntry}"
+                    Text="{Binding Model.Password}" />
+            </Border>
+        </VerticalStackLayout>
+
+        <!--  Error Message Label  -->
+        <Label
+            FontFamily="InterMedium"
+            FontSize="14"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center"
+            IsVisible="{Binding Model.IsErrorVisible}"
+            Text="{Binding Model.ErrorMessage}"
+            TextColor="Red" />
+
+        <!--  Forgot Password Link  -->
+        <Label
+            Margin="0,0,0,10"
+            FontFamily="InterMedium"
+            FontSize="14"
+            HorizontalOptions="End"
+            Text="Forgot Password?"
+            TextColor="#7237BA">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding ForgotPasswordCommand}" />
+            </Label.GestureRecognizers>
+        </Label>
+
+        <!--  Login Button  -->
+        <Button
+            Margin="0,10,0,20"
+            BackgroundColor="Black"
+            Command="{Binding LoginCommand}"
+            CornerRadius="20"
+            FontFamily="InterBold"
+            HeightRequest="60"
+            Text="Login"
+            TextColor="White"
+            TextTransform="None" />
+
+        <!--  Create Account Link  -->
+        <Label FontSize="15" HorizontalOptions="Center">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding NavigateToSignUpCommand}" />
+            </Label.GestureRecognizers>
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span FontFamily="InterMedium" Text="Don't have an account yet?" />
+                    <Span Text=" " />
+                    <Span
+                        FontFamily="InterBold"
+                        Text="Create it now!"
+                        TextColor="#7237BA" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+    </VerticalStackLayout>
+
+</ContentPage>

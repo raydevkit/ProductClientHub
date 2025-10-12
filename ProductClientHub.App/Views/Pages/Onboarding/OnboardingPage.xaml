@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="ProductClientHub.App.Views.Pages.Onboarding.OnboardingPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModel="clr-namespace:ProductClientHub.App.ViewModels.Pages.Onboarding"
+    x:DataType="viewModel:OnboardingViewModel"
+    Shell.NavBarIsVisible="False">
+
+    <VerticalStackLayout Spacing="40">
+        <Image Margin="0,40,0,0" Source="login_hero.png" />
+
+        <Label
+            Margin="0,30,0,30"
+            FontFamily="InterBold"
+            FontSize="24"
+            HorizontalOptions="Center"
+            Text="Your Client Hub"
+            TextColor="Black"
+            VerticalOptions="Center" />
+
+        <Button
+            Margin="0,0,0,20"
+            BackgroundColor="Black"
+            Command="{Binding LoginWithEmailAndPasswordCommand}"
+            CornerRadius="20"
+            FontFamily="InterBold"
+            HeightRequest="60"
+            Text="Login with email and password"
+            TextColor="White"
+            TextTransform="None" />
+
+        <VerticalStackLayout Padding="0,7,0,0" HeightRequest="40">
+            <VerticalStackLayout.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding GetSignupPageCommand}" />
+            </VerticalStackLayout.GestureRecognizers>
+
+            <Label FontSize="17" HorizontalOptions="Center">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span FontFamily="InterMedium" Text="Don't have an account yet?" />
+                        <Span Text=" " />
+                        <Span
+                            FontFamily="InterBold"
+                            Text="Create it now!"
+                            TextColor="#7237BA" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+        </VerticalStackLayout>
+
+    </VerticalStackLayout>
+</ContentPage>
