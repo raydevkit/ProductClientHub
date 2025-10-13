@@ -72,7 +72,7 @@ namespace ProductClientHub.App
             var apiUrl = appBuilder.Configuration.GetValue<string>("ApiUrl")!;
 
             appBuilder.Services.AddRefitClient<IUserApiClient>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri("apiUrl"));
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(apiUrl));
 
             return appBuilder;
 

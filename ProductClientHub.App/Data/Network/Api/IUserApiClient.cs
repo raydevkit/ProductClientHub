@@ -6,6 +6,6 @@ namespace ProductClientHub.App.Data.Network.Api;
 
 public interface IUserApiClient
 {
-    [Post("/auth/register")]
+    [Post("/api/Auth/register")]
     Task<ResponseRegisteredUserJson> Register([Body]RequestRegisterUserJson request);
 }
