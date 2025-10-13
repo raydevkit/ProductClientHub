@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProductClientHub.App.Views.Pages.Dashboard.DashboardPage"
+             Title="Dashboard">
+    <Grid RowDefinitions="Auto, *" Padding="16">
+        <StackLayout Spacing="8">
+            <Label Text="Clients" FontAttributes="Bold" FontSize="20"/>
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"/>
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding IsErrorVisible}"/>
+        </StackLayout>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Clients}" SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="No clients yet." HorizontalOptions="Center" VerticalOptions="Center"/>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="12">
+                        <Label Text="{Binding Name}" FontSize="16"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
