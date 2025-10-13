@@ -18,6 +18,7 @@ namespace ProductClientHub.API.UseCases.Clients.GetAll
                 {
                     Id = client.Id,
                     Name = client.Name,
+                    LastName = client.LastName,
 
                 }).ToList()
             };

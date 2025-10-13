@@ -32,7 +32,8 @@ namespace ProductClientHub.API.UseCases.Products.Register
             {
                 Id = entity.Id,
                 Name = entity.Name,
-               
+                Brand = entity.Brand,
+                Price = entity.Price
             };
 
         }
