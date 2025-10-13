@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProductClientHub.App.Views.Pages.Dashboard.DashboardPage"
-             Title="Dashboard">
+             Title="Dashboard"
+             Shell.NavBarIsVisible="True">
     <Grid RowDefinitions="Auto, *" Padding="16">
         <StackLayout Spacing="8">
             <Label Text="Clients" FontAttributes="Bold" FontSize="20"/>
