@@ -23,12 +23,14 @@ namespace ProductClientHub.API.UseCases.Clients.GetById
             {
                 Id = entity.Id,
                 Name = entity.Name,
+                LastName = entity.LastName,
                 Email = entity.Email,
                 CodiceFiscale = entity.CodiceFiscale,
                 Products = entity.Products.Select(product => new ResponseShortProductJson
                 {
                     Id = product.Id,
                     Name = product.Name,
+                    Brand = product.Brand,
                     Price = product.Price
                 }).ToList()
 
