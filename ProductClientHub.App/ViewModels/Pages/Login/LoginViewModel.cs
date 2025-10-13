@@ -24,11 +24,11 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     private async Task Login()
     {
-        // Hide previous error
+        
         Model.IsErrorVisible = false;
         Model.ErrorMessage = string.Empty;
 
-        // Validate using FluentValidation
+       
         var validationResult = await _validator.ValidateAsync(this);
         if (!validationResult.IsValid)
         {
@@ -39,6 +39,9 @@ public partial class LoginViewModel : ObservableObject
         try
         {
             await _loginUseCase.Execute(Model.Email, Model.Password);
+
+           
+            await _navigationService.GoToAsync(RoutePages.DASHBOARD_PAGE);
 
             var windows = Application.Current?.Windows;
             if (windows is { Count: > 0 })

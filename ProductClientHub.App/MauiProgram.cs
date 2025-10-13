@@ -7,9 +7,12 @@ using ProductClientHub.App.Data.Network.Api;
 using ProductClientHub.App.Navigation;
 using ProductClientHub.App.UseCases.Auth.Login;
 using ProductClientHub.App.UseCases.Auth.Register;
+using ProductClientHub.App.UseCases.Clients.GetAll;
+using ProductClientHub.App.ViewModels.Pages.Dashboard;
 using ProductClientHub.App.ViewModels.Pages.Login;
 using ProductClientHub.App.ViewModels.Pages.Onboarding;
 using ProductClientHub.App.ViewModels.Pages.SignUp;
+using ProductClientHub.App.Views.Pages.Dashboard;
 using ProductClientHub.App.Views.Pages.Login;
 using ProductClientHub.App.Views.Pages.SignUp;
 using Refit;
@@ -47,6 +50,7 @@ namespace ProductClientHub.App
             appBuilder.Services.AddTransient<OnboardingViewModel>();
             appBuilder.Services.AddScopedWithShellRoute<LoginPage, LoginViewModel>(RoutePages.LOGIN_PAGE);
             appBuilder.Services.AddScopedWithShellRoute<SignUpPage, SignUpViewModel>(RoutePages.SIGNUP_PAGE);
+            appBuilder.Services.AddScopedWithShellRoute<DashboardPage, DashboardViewModel>(RoutePages.DASHBOARD_PAGE);
             return appBuilder;
         }
 
@@ -90,6 +94,7 @@ namespace ProductClientHub.App
         {
             appBuilder.Services.AddTransient<IRegisterUserUseCase, RegisterUserUseCase>();
             appBuilder.Services.AddTransient<ILoginUseCase, LoginUseCase>();
+            appBuilder.Services.AddTransient<IGetAllClientsUseCase, GetAllClientsUseCase>();
             return appBuilder;
         }
     }
