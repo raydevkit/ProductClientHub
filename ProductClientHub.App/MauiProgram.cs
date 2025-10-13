@@ -1,8 +1,11 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using ProductClientHub.App.Data.Auth;
+using ProductClientHub.App.Data.Network;
 using ProductClientHub.App.Data.Network.Api;
 using ProductClientHub.App.Navigation;
+using ProductClientHub.App.UseCases.Auth.Login;
 using ProductClientHub.App.UseCases.Auth.Register;
 using ProductClientHub.App.ViewModels.Pages.Login;
 using ProductClientHub.App.ViewModels.Pages.Onboarding;
@@ -71,8 +74,13 @@ namespace ProductClientHub.App
         {
             var apiUrl = appBuilder.Configuration.GetValue<string>("ApiUrl")!;
 
+            // token store + auth handler
+            appBuilder.Services.AddSingleton<ITokenStore, SecureTokenStore>();
+            appBuilder.Services.AddTransient<AuthHeaderHandler>();
+
             appBuilder.Services.AddRefitClient<IUserApiClient>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(apiUrl));
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(apiUrl))
+                .AddHttpMessageHandler<AuthHeaderHandler>();
 
             return appBuilder;
 
@@ -81,6 +89,7 @@ namespace ProductClientHub.App
         private static MauiAppBuilder AddUseCases(this MauiAppBuilder appBuilder)
         {
             appBuilder.Services.AddTransient<IRegisterUserUseCase, RegisterUserUseCase>();
+            appBuilder.Services.AddTransient<ILoginUseCase, LoginUseCase>();
             return appBuilder;
         }
     }

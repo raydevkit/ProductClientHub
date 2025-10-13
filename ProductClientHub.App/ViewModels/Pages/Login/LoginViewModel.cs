@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProductClientHub.App.Navigation;
+using ProductClientHub.App.UseCases.Auth.Login;
 using ProductClientHub.App.Validation;
 
 namespace ProductClientHub.App.ViewModels.Pages.Login;
@@ -9,13 +10,15 @@ public partial class LoginViewModel : ObservableObject
 {
     private readonly LoginViewModelValidator _validator = new();
     private readonly INavigationService _navigationService;
+    private readonly ILoginUseCase _loginUseCase;
 
     [ObservableProperty]
     private Models.Login model = new();
 
-    public LoginViewModel(INavigationService navigationService)
+    public LoginViewModel(INavigationService navigationService, ILoginUseCase loginUseCase)
     {
         _navigationService = navigationService;
+        _loginUseCase = loginUseCase;
     }
 
     [RelayCommand]
@@ -35,15 +38,7 @@ public partial class LoginViewModel : ObservableObject
 
         try
         {
-            // TODO: Call API to login user
-            // var request = new RequestLoginJson
-            // {
-            //     Email = Model.Email,
-            //     Password = Model.Password
-            // };
-            
-            // Simulate API call
-            await Task.Delay(500);
+            await _loginUseCase.Execute(Model.Email, Model.Password);
 
             var windows = Application.Current?.Windows;
             if (windows is { Count: > 0 })
