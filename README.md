@@ -103,7 +103,7 @@ All endpoints (except `register` and `login`) require Bearer authentication (`[A
 
 ### Start the API
 - Set `ProductClientHub.API` as startup project and run.
-- Swagger UI: `https://localhost:<port>/swagger`
+- Swagger UI: `[https://j0zqh62p-7092.euw.devtunnels.ms]/swagger`
   - Use the Authorize button to paste the JWT token acquired from `/api/auth/login`.
 
 ### Start the MAUI app
