@@ -102,13 +102,17 @@ All endpoints (except `register` and `login`) require Bearer authentication (`[A
   - `ProductClientHub.App/appsettings.json` is embedded and loaded via `AddJsonStream`. Set `ApiUrl` to your API base URL.
 
 ### Start the API
-- Set `ProductClientHub.API` as startup project and run.
+- Set `ProductClientHub.App` as startup project and run (Toggle Dev Tunnel on).
 - Swagger UI: `https://j0zqh62p-7092.euw.devtunnels.ms/swagger`
   - Use the Authorize button to paste the JWT token acquired from `/api/auth/login`.
 
 ### Start the MAUI app
 - Set `ProductClientHub.App` as startup project.
-- Select target platform (Android, iOS, Windows, or MacCatalyst) and run.
+- Select target platform (Tested on Android Emulator API 36, iOS, Windows, or MacCatalyst remain untested).
+
+### Setup API and MAUI app
+- Set `ProductClientHub.App` and `ProductClientHub.App` as multiple startup projects.
+- Setup DevTunnel `ProductCLientTunnel` (Tested and created on personal github account `raydevkit`)
 
 ## Error model
 - On validation, not found, or authorization issues, the API returns:
