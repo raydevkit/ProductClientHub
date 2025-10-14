@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using ProductClientHub.App.Navigation;
 using ProductClientHub.App.UseCases.Auth.Login;
 using ProductClientHub.App.Validation;
+using ProductClientHub.App.Views.Shells;
 
 namespace ProductClientHub.App.ViewModels.Pages.Login;
 
@@ -40,18 +41,9 @@ public partial class LoginViewModel : ObservableObject
         {
             await _loginUseCase.Execute(Model.Email, Model.Password);
 
-            // Navigate to the root of the Dashboard Shell item so the flyout (hamburger) is visible
-            await _navigationService.GoToAsync($"//{RoutePages.DASHBOARD_PAGE}");
-
-            var windows = Application.Current?.Windows;
-            if (windows is { Count: > 0 })
-            {
-                var mainPage = windows[0]?.Page;
-                if (mainPage != null)
-                {
-                    await mainPage.DisplayAlertAsync("Success", "Login successful!", "OK");
-                }
-            }
+            // Swap to authenticated shell using window root page (no obsolete API)
+            var window = Application.Current!.Windows.First();
+            window.Page = new DashboardShell();
         }
         catch (Exception ex)
         {
