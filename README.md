@@ -50,6 +50,7 @@ A full-stack sample solution for managing clients and products, composed of:
 - FluentValidation 12.0.0
 - .NET MAUI + CommunityToolkit.Maui 12.2.0 + CommunityToolkit.Mvvm 8.4.0
 - Refit 8.0.0 HTTP client with HttpClientFactory
+- DevTunnel setup for connections for API/APP
 
 ## Architecture
 - API follows a thin-controller, use-case oriented approach. Controllers call use cases directly.
