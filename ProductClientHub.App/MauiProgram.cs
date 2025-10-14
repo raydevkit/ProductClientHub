@@ -7,7 +7,13 @@ using ProductClientHub.App.Data.Network.Api;
 using ProductClientHub.App.Navigation;
 using ProductClientHub.App.UseCases.Auth.Login;
 using ProductClientHub.App.UseCases.Auth.Register;
+using ProductClientHub.App.UseCases.Clients.Create;
+using ProductClientHub.App.UseCases.Clients.Delete;
 using ProductClientHub.App.UseCases.Clients.GetAll;
+using ProductClientHub.App.UseCases.Clients.GetById;
+using ProductClientHub.App.UseCases.Clients.Update;
+using ProductClientHub.App.UseCases.Products.Create;
+using ProductClientHub.App.UseCases.Products.Delete;
 using ProductClientHub.App.ViewModels.Pages.Dashboard;
 using ProductClientHub.App.ViewModels.Pages.Login;
 using ProductClientHub.App.ViewModels.Pages.Onboarding;
@@ -94,7 +100,15 @@ namespace ProductClientHub.App
         {
             appBuilder.Services.AddTransient<IRegisterUserUseCase, RegisterUserUseCase>();
             appBuilder.Services.AddTransient<ILoginUseCase, LoginUseCase>();
+
             appBuilder.Services.AddTransient<IGetAllClientsUseCase, GetAllClientsUseCase>();
+            appBuilder.Services.AddTransient<IGetClientByIdUseCase, GetClientByIdUseCase>();
+            appBuilder.Services.AddTransient<ICreateClientUseCase, CreateClientUseCase>();
+            appBuilder.Services.AddTransient<IUpdateClientUseCase, UpdateClientUseCase>();
+            appBuilder.Services.AddTransient<IDeleteClientUseCase, DeleteClientUseCase>();
+
+            appBuilder.Services.AddTransient<ICreateProductUseCase, CreateProductUseCase>();
+            appBuilder.Services.AddTransient<IDeleteProductUseCase, DeleteProductUseCase>();
             return appBuilder;
         }
     }
