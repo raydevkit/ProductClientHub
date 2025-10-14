@@ -3,12 +3,10 @@
     x:Class="ProductClientHub.App.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:login="clr-namespace:ProductClientHub.App.Views.Pages.Login"
-    xmlns:navigation="clr-namespace:ProductClientHub.App.Navigation"
     xmlns:onboarding="clr-namespace:ProductClientHub.App.Views.Pages.Onboarding"
-    xmlns:signup="clr-namespace:ProductClientHub.App.Views.Pages.SignUp"
+    xmlns:navigation="clr-namespace:ProductClientHub.App.Navigation"
     Title="ProductClientHub.App"
-    Shell.FlyoutBehavior="Flyout">
+    Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
         Title="Home"

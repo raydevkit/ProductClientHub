@@ -1,6 +1,5 @@
 ﻿using ProductClientHub.App.Views.Pages.Login;
 using ProductClientHub.App.Views.Pages.SignUp;
-using ProductClientHub.App.Views.Pages.Dashboard;
 using ProductClientHub.App.Data.Auth;
 using ProductClientHub.App.Data.Network.Api;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,10 +18,9 @@ namespace ProductClientHub.App
             // Register routes for navigation
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
             Routing.RegisterRoute(nameof(SignUpPage), typeof(SignUpPage));
-            Routing.RegisterRoute(nameof(DashboardPage), typeof(DashboardPage));
+            // Dashboard is in a separate shell, so we don't register a global route here
         }
 
-        // Optional DI-enabled constructor; default constructor still used by App
         public AppShell(ITokenStore tokenStore, IUserApiClient apiClient) : this()
         {
             _tokenStore = tokenStore;
@@ -31,28 +29,12 @@ namespace ProductClientHub.App
 
         private async void OnLogoutClicked(object sender, EventArgs e)
         {
-            try
+            // Not used in onboarding-only shell; show async alert to avoid obsolete API warning
+            var windows = Application.Current?.Windows;
+            var mainPage = windows is { Count: > 0 } ? windows[0]?.Page : null;
+            if (mainPage != null)
             {
-                var services = this.Handler?.MauiContext?.Services ?? Application.Current?.Handler?.MauiContext?.Services;
-                var api = _apiClient ?? services?.GetService<IUserApiClient>();
-                var store = _tokenStore ?? services?.GetService<ITokenStore>();
-
-                if (api != null)
-                {
-                    try { await api.Logout(); } catch { /* ignore logout errors */ }
-                }
-
-                if (store != null)
-                {
-                    await store.ClearAsync();
-                }
-
-                // Navigate to login page
-                await Shell.Current.GoToAsync(nameof(LoginPage));
-            }
-            catch
-            {
-                await Shell.Current.GoToAsync(nameof(LoginPage));
+                await mainPage.DisplayAlertAsync("Info", "Logout not available here.", "OK");
             }
         }
     }
