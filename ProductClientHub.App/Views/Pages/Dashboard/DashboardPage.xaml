@@ -15,7 +15,6 @@
                              Command="{Binding ToggleCreateClientCommand}"/>
             </Grid>
             <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"/>
-            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding IsErrorVisible}"/>
 
             <Grid IsVisible="{Binding IsCreateClientVisible}" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,*" Padding="12" BackgroundColor="#F7F7F7">
                 <Entry Grid.Row="0" Grid.ColumnSpan="2" Placeholder="Last Name" Text="{Binding NewClient.LastName}"/>
