@@ -1,23 +1,27 @@
 using ProductClientHub.App.Data.Network.Api;
+using ProductClientHub.App.Services;
 using ProductClientHub.Communication.Responses;
 
 namespace ProductClientHub.App.UseCases.Clients.GetAll;
 
-public class GetAllClientsUseCase : IGetAllClientsUseCase
+public interface IGetAllClientsUseCase
 {
-    private readonly IUserApiClient _api;
+    Task<IReadOnlyList<ResponseShortClientJson>> Execute();
+}
 
-    public GetAllClientsUseCase(IUserApiClient api)
-    {
-        _api = api;
-    }
-
+public class GetAllClientsUseCase(
+    IUserApiClient api,
+    IApiErrorHandler errorHandler) : BaseUseCase(errorHandler), IGetAllClientsUseCase
+{
     public async Task<IReadOnlyList<ResponseShortClientJson>> Execute()
     {
-        var resp = await _api.GetAllClients();
-        if (resp.StatusCode == System.Net.HttpStatusCode.NoContent || resp.Content is null)
-            return Array.Empty<ResponseShortClientJson>();
+        return await ExecuteWithErrorHandlingAsync(async () =>
+        {
+            var resp = await api.GetAllClients();
+            if (resp.StatusCode == System.Net.HttpStatusCode.NoContent || resp.Content is null)
+                return Array.Empty<ResponseShortClientJson>();
 
-        return resp.Content.Clients;
+            return (IReadOnlyList<ResponseShortClientJson>)resp.Content.Clients;
+        });
     }
 }

@@ -1,18 +1,19 @@
 using ProductClientHub.App.Data.Network.Api;
+using ProductClientHub.App.Services;
 
 namespace ProductClientHub.App.UseCases.Products.Delete;
 
-public class DeleteProductUseCase : IDeleteProductUseCase
+public interface IDeleteProductUseCase
 {
-    private readonly IUserApiClient _api;
+    Task Execute(Guid id);
+}
 
-    public DeleteProductUseCase(IUserApiClient api)
-    {
-        _api = api;
-    }
-
+public class DeleteProductUseCase(
+    IUserApiClient api,
+    IApiErrorHandler errorHandler) : BaseUseCase(errorHandler), IDeleteProductUseCase
+{
     public async Task Execute(Guid id)
     {
-        await _api.DeleteProduct(id);
+        await ExecuteWithErrorHandlingAsync(async () => await api.DeleteProduct(id));
     }
 }

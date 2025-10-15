@@ -2,14 +2,9 @@
 
 namespace ProductClientHub.Exceptions.ExceptionsBase
 {
-    public class ErrorOnValidationException : ProductClientHubException
+    public class ErrorOnValidationException(List<string> errorMessages) : ProductClientHubException(string.Empty)
     {
-        private readonly List<string> _errors;
-
-        public ErrorOnValidationException(List<string> errorMessages) : base(string.Empty)
-        {
-            _errors = errorMessages;
-        }
+        private readonly List<string> _errors = errorMessages;
 
         public override List<string> GetErrors() => _errors;
 
