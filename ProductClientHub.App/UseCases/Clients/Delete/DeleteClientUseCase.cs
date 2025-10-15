@@ -1,18 +1,19 @@
 using ProductClientHub.App.Data.Network.Api;
+using ProductClientHub.App.Services;
 
 namespace ProductClientHub.App.UseCases.Clients.Delete;
 
-public class DeleteClientUseCase : IDeleteClientUseCase
+public interface IDeleteClientUseCase
 {
-    private readonly IUserApiClient _api;
+    Task Execute(Guid id);
+}
 
-    public DeleteClientUseCase(IUserApiClient api)
-    {
-        _api = api;
-    }
-
+public class DeleteClientUseCase(
+    IUserApiClient api,
+    IApiErrorHandler errorHandler) : BaseUseCase(errorHandler), IDeleteClientUseCase
+{
     public async Task Execute(Guid id)
     {
-        await _api.DeleteClient(id);
+        await ExecuteWithErrorHandlingAsync(async () => await api.DeleteClient(id));
     }
 }

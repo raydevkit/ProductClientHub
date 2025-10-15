@@ -1,19 +1,20 @@
 using ProductClientHub.App.Data.Network.Api;
+using ProductClientHub.App.Services;
 using ProductClientHub.Communication.Requests;
 
 namespace ProductClientHub.App.UseCases.Clients.Update;
 
-public class UpdateClientUseCase : IUpdateClientUseCase
+public interface IUpdateClientUseCase
 {
-    private readonly IUserApiClient _api;
+    Task Execute(Guid id, RequestClientJson request);
+}
 
-    public UpdateClientUseCase(IUserApiClient api)
-    {
-        _api = api;
-    }
-
+public class UpdateClientUseCase(
+    IUserApiClient api,
+    IApiErrorHandler errorHandler) : BaseUseCase(errorHandler), IUpdateClientUseCase
+{
     public async Task Execute(Guid id, RequestClientJson request)
     {
-        await _api.UpdateClient(id, request);
+        await ExecuteWithErrorHandlingAsync(async () => await api.UpdateClient(id, request));
     }
 }

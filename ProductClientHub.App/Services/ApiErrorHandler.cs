@@ -9,7 +9,6 @@ public interface IApiErrorHandler
 {
     Task<IEnumerable<string>> ExtractErrorMessagesAsync(Exception exception);
     Task HandleAndNotifyAsync(Exception exception);
-    bool IsAuthenticationError(Exception exception);
 }
 
 public class ApiErrorHandler(IErrorNotifier errorNotifier) : IApiErrorHandler
@@ -25,7 +24,7 @@ public class ApiErrorHandler(IErrorNotifier errorNotifier) : IApiErrorHandler
     {
         return exception switch
         {
-            ApiException apiException => await ParseApiExceptionAsync(apiException),
+            ApiException apiException => ParseApiException(apiException),
             HttpRequestException httpException => HandleHttpException(httpException),
             TaskCanceledException => ["Request timed out. Please try again."],
             _ => ["An unexpected error occurred. Please try again."]
@@ -38,16 +37,7 @@ public class ApiErrorHandler(IErrorNotifier errorNotifier) : IApiErrorHandler
         await _errorNotifier.ShowErrors(errors);
     }
 
-    public bool IsAuthenticationError(Exception exception)
-    {
-        if (exception is ApiException apiEx)
-        {
-            return apiEx.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden;
-        }
-        return false;
-    }
-
-    private static async Task<IEnumerable<string>> ParseApiExceptionAsync(ApiException apiException)
+    private static IEnumerable<string> ParseApiException(ApiException apiException)
     {
         try
         {

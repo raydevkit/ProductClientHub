@@ -1,24 +1,29 @@
 ﻿using ProductClientHub.App.Data.Network.Api;
+using ProductClientHub.App.Services;
 using ProductClientHub.Communication.Requests;
 
 namespace ProductClientHub.App.UseCases.Auth.Register;
 
-public class RegisterUserUseCase : IRegisterUserUseCase
+public interface IRegisterUserUseCase
 {
-    private readonly IUserApiClient _userApi;
-    public RegisterUserUseCase(IUserApiClient userApi)
-    {
-        _userApi = userApi;
-    }
+    Task Execute(Models.SignUp user);
+}
+
+public class RegisterUserUseCase(
+    IUserApiClient userApi,
+    IApiErrorHandler errorHandler) : BaseUseCase(errorHandler), IRegisterUserUseCase
+{
     public async Task Execute(Models.SignUp user)
     {
-        var request = new RequestRegisterUserJson
+        await ExecuteWithErrorHandlingAsync(async () =>
         {
-            Name = user.Name,
-            Email = user.Email,
-            Password = user.Password
-        };
-       var response = await _userApi.Register(request);
+            var request = new RequestRegisterUserJson
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Password = user.Password
+            };
+            await userApi.Register(request);
+        });
     }
-
 }

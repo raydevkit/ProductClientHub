@@ -1,20 +1,21 @@
 using ProductClientHub.App.Data.Network.Api;
+using ProductClientHub.App.Services;
 using ProductClientHub.Communication.Requests;
 using ProductClientHub.Communication.Responses;
 
 namespace ProductClientHub.App.UseCases.Clients.Create;
 
-public class CreateClientUseCase : ICreateClientUseCase
+public interface ICreateClientUseCase
 {
-    private readonly IUserApiClient _api;
+    Task<ResponseShortClientJson> Execute(RequestClientJson request);
+}
 
-    public CreateClientUseCase(IUserApiClient api)
-    {
-        _api = api;
-    }
-
+public class CreateClientUseCase(
+    IUserApiClient api,
+    IApiErrorHandler errorHandler) : BaseUseCase(errorHandler), ICreateClientUseCase
+{
     public async Task<ResponseShortClientJson> Execute(RequestClientJson request)
     {
-        return await _api.RegisterClient(request);
+        return await ExecuteWithErrorHandlingAsync(async () => await api.RegisterClient(request));
     }
 }
