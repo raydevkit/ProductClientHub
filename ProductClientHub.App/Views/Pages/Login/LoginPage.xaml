@@ -45,15 +45,7 @@
             </Border>
         </VerticalStackLayout>
 
-        <!--  Error Message Label  -->
-        <Label
-            FontFamily="InterMedium"
-            FontSize="14"
-            HorizontalOptions="Center"
-            HorizontalTextAlignment="Center"
-            IsVisible="{Binding Model.IsErrorVisible}"
-            Text="{Binding Model.ErrorMessage}"
-            TextColor="Red" />
+        <!-- Removed inline error label: use toast notifications only -->
 
         <!--  Forgot Password Link  -->
         <Label

@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProductClientHub.App.Navigation;
+using ProductClientHub.App.Services;
 using ProductClientHub.App.UseCases.Clients.Create;
 using ProductClientHub.App.UseCases.Clients.Delete;
 using ProductClientHub.App.UseCases.Clients.GetAll;
@@ -9,6 +9,7 @@ using ProductClientHub.App.UseCases.Clients.GetById;
 using ProductClientHub.App.UseCases.Clients.Update;
 using ProductClientHub.App.UseCases.Products.Create;
 using ProductClientHub.App.UseCases.Products.Delete;
+using ProductClientHub.App.Validation;
 using ProductClientHub.Communication.Requests;
 using ProductClientHub.Communication.Responses;
 
@@ -23,15 +24,11 @@ public partial class DashboardViewModel : ObservableObject
     private readonly IDeleteClientUseCase _deleteClient;
     private readonly ICreateProductUseCase _createProduct;
     private readonly IDeleteProductUseCase _deleteProduct;
+    private readonly IErrorNotifier _notifier;
+    private readonly DashboardCreateClientValidator _createClientValidator;
 
     [ObservableProperty]
     private bool isBusy;
-
-    [ObservableProperty]
-    private string errorMessage = string.Empty;
-
-    [ObservableProperty]
-    private bool isErrorVisible;
 
     public ObservableCollection<ClientItemViewModel> Clients { get; } = new();
 
@@ -42,7 +39,9 @@ public partial class DashboardViewModel : ObservableObject
         IUpdateClientUseCase updateClient,
         IDeleteClientUseCase deleteClient,
         ICreateProductUseCase createProduct,
-        IDeleteProductUseCase deleteProduct)
+        IDeleteProductUseCase deleteProduct,
+        IErrorNotifier notifier,
+        DashboardCreateClientValidator createClientValidator)
     {
         _getAllClients = getAllClients;
         _getClientById = getClientById;
@@ -51,6 +50,8 @@ public partial class DashboardViewModel : ObservableObject
         _deleteClient = deleteClient;
         _createProduct = createProduct;
         _deleteProduct = deleteProduct;
+        _notifier = notifier;
+        _createClientValidator = createClientValidator;
     }
 
     [RelayCommand]
@@ -58,8 +59,6 @@ public partial class DashboardViewModel : ObservableObject
     {
         if (IsBusy) return;
         IsBusy = true;
-        IsErrorVisible = false;
-        ErrorMessage = string.Empty;
         try
         {
             Clients.Clear();
@@ -69,7 +68,7 @@ public partial class DashboardViewModel : ObservableObject
             var vms = new List<ClientItemViewModel>(items.Count);
             foreach (var c in items)
             {
-                var vm = new ClientItemViewModel(c.Id, c.LastName, c.Name, _getClientById, _updateClient, _deleteClient, _createProduct, _deleteProduct);
+                var vm = new ClientItemViewModel(c.Id, c.LastName, c.Name, _getClientById, _updateClient, _deleteClient, _createProduct, _deleteProduct, _notifier);
                 vms.Add(vm);
                 Clients.Add(vm);
             }
@@ -79,8 +78,7 @@ public partial class DashboardViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message;
-            IsErrorVisible = true;
+            await _notifier.ShowError(ex.Message);
         }
         finally
         {
@@ -101,11 +99,20 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task CreateClient()
     {
+        // validate
+        var validation = await _createClientValidator.ValidateAsync(this);
+        if (!validation.IsValid)
+        {
+            var msg = validation.Errors.First().ErrorMessage;
+            await _notifier.ShowError(msg);
+            return;
+        }
+
         try
         {
             var created = await _createClient.Execute(NewClient);
             // add to top and reset form
-            var vm = new ClientItemViewModel(created.Id, NewClient.LastName, NewClient.Name, _getClientById, _updateClient, _deleteClient, _createProduct, _deleteProduct);
+            var vm = new ClientItemViewModel(created.Id, NewClient.LastName, NewClient.Name, _getClientById, _updateClient, _deleteClient, _createProduct, _deleteProduct, _notifier);
             Clients.Insert(0, vm);
             // Prefetch the just-created client's details (if API returns them later)
             _ = vm.PrefetchDetailsAsync();
@@ -115,8 +122,7 @@ public partial class DashboardViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message;
-            IsErrorVisible = true;
+            await _notifier.ShowError(ex.Message);
         }
     }
 }
@@ -128,6 +134,9 @@ public partial class ClientItemViewModel : ObservableObject
     private readonly IDeleteClientUseCase _deleteClient;
     private readonly ICreateProductUseCase _createProduct;
     private readonly IDeleteProductUseCase _deleteProduct;
+    private readonly IErrorNotifier _notifier;
+    private readonly ClientItemEditValidator _editValidator;
+    private readonly ClientItemCreateProductValidator _productValidator;
 
     public Guid Id { get; }
 
@@ -169,7 +178,8 @@ public partial class ClientItemViewModel : ObservableObject
         IUpdateClientUseCase updateClient,
         IDeleteClientUseCase deleteClient,
         ICreateProductUseCase createProduct,
-        IDeleteProductUseCase deleteProduct)
+        IDeleteProductUseCase deleteProduct,
+        IErrorNotifier notifier)
     {
         Id = id;
         LastName = lastName;
@@ -179,6 +189,9 @@ public partial class ClientItemViewModel : ObservableObject
         _deleteClient = deleteClient;
         _createProduct = createProduct;
         _deleteProduct = deleteProduct;
+        _notifier = notifier;
+        _editValidator = new ClientItemEditValidator();
+        _productValidator = new ClientItemCreateProductValidator();
     }
 
     // Called automatically by MVVM Toolkit when IsExpanded changes
@@ -222,6 +235,14 @@ public partial class ClientItemViewModel : ObservableObject
     [RelayCommand]
     private async Task SaveEdit()
     {
+        var valid = await _editValidator.ValidateAsync(this);
+        if (!valid.IsValid)
+        {
+            var msg = valid.Errors.First().ErrorMessage;
+            await _notifier.ShowError(msg);
+            return;
+        }
+
         var req = new RequestClientJson { Name = Name, LastName = LastName, Email = Email, CodiceFiscale = CodiceFiscale };
         await _updateClient.Execute(Id, req);
         IsEditing = false;
@@ -247,6 +268,14 @@ public partial class ClientItemViewModel : ObservableObject
     [RelayCommand]
     private async Task CreateProduct()
     {
+        var valid = await _productValidator.ValidateAsync(this);
+        if (!valid.IsValid)
+        {
+            var msg = valid.Errors.First().ErrorMessage;
+            await _notifier.ShowError(msg);
+            return;
+        }
+
         var req = new RequestProductJson { Name = NewProductName, Brand = NewProductBrand, Price = NewProductPrice };
         var created = await _createProduct.Execute(Id, req);
         Products.Add(created);

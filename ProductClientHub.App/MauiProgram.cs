@@ -5,6 +5,7 @@ using ProductClientHub.App.Data.Auth;
 using ProductClientHub.App.Data.Network;
 using ProductClientHub.App.Data.Network.Api;
 using ProductClientHub.App.Navigation;
+using ProductClientHub.App.Services;
 using ProductClientHub.App.UseCases.Auth.Login;
 using ProductClientHub.App.UseCases.Auth.Register;
 using ProductClientHub.App.UseCases.Clients.Create;
@@ -14,6 +15,7 @@ using ProductClientHub.App.UseCases.Clients.GetById;
 using ProductClientHub.App.UseCases.Clients.Update;
 using ProductClientHub.App.UseCases.Products.Create;
 using ProductClientHub.App.UseCases.Products.Delete;
+using ProductClientHub.App.Validation;
 using ProductClientHub.App.ViewModels.Pages.Dashboard;
 using ProductClientHub.App.ViewModels.Pages.Login;
 using ProductClientHub.App.ViewModels.Pages.Onboarding;
@@ -39,6 +41,7 @@ namespace ProductClientHub.App
                 .AddAppSettings()
                 .AddHttpClients()
                 .AddUseCases()
+                .AddValidation()
                 .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("Inter_24pt-Medium.ttf", "InterMedium");
@@ -109,6 +112,21 @@ namespace ProductClientHub.App
 
             appBuilder.Services.AddTransient<ICreateProductUseCase, CreateProductUseCase>();
             appBuilder.Services.AddTransient<IDeleteProductUseCase, DeleteProductUseCase>();
+            return appBuilder;
+        }
+
+        private static MauiAppBuilder AddValidation(this MauiAppBuilder appBuilder)
+        {
+            // error notifier
+            appBuilder.Services.AddSingleton<IErrorNotifier, ErrorNotifier>();
+
+            // validators
+            appBuilder.Services.AddTransient<LoginViewModelValidator>();
+            appBuilder.Services.AddTransient<SignUpViewModelValidator>();
+            appBuilder.Services.AddTransient<DashboardCreateClientValidator>();
+            appBuilder.Services.AddTransient<ClientItemEditValidator>();
+            appBuilder.Services.AddTransient<ClientItemCreateProductValidator>();
+
             return appBuilder;
         }
     }

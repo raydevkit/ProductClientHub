@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProductClientHub.App.Navigation;
+using ProductClientHub.App.Services;
 using ProductClientHub.App.UseCases.Auth.Login;
 using ProductClientHub.App.Validation;
 using ProductClientHub.App.Views.Shells;
@@ -12,28 +13,26 @@ public partial class LoginViewModel : ObservableObject
     private readonly LoginViewModelValidator _validator = new();
     private readonly INavigationService _navigationService;
     private readonly ILoginUseCase _loginUseCase;
+    private readonly IErrorNotifier _notifier;
 
     [ObservableProperty]
     private Models.Login model = new();
 
-    public LoginViewModel(INavigationService navigationService, ILoginUseCase loginUseCase)
+    public LoginViewModel(INavigationService navigationService, ILoginUseCase loginUseCase, IErrorNotifier notifier)
     {
         _navigationService = navigationService;
         _loginUseCase = loginUseCase;
+        _notifier = notifier;
     }
 
     [RelayCommand]
     private async Task Login()
     {
-        // Hide previous error
-        Model.IsErrorVisible = false;
-        Model.ErrorMessage = string.Empty;
-
         // Validate using FluentValidation
         var validationResult = await _validator.ValidateAsync(this);
         if (!validationResult.IsValid)
         {
-            ShowError(validationResult.Errors.First().ErrorMessage);
+            await _notifier.ShowError(validationResult.Errors.First().ErrorMessage);
             return;
         }
 
@@ -47,7 +46,7 @@ public partial class LoginViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            ShowError($"Login failed: {ex.Message}");
+            await _notifier.ShowError($"Login failed: {ex.Message}");
         }
     }
 
@@ -69,11 +68,5 @@ public partial class LoginViewModel : ObservableObject
                 await mainPage.DisplayAlertAsync("Info", "Forgot password feature coming soon!", "OK");
             }
         }
-    }
-
-    private void ShowError(string message)
-    {
-        Model.ErrorMessage = message;
-        Model.IsErrorVisible = true;
     }
 }

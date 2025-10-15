@@ -68,16 +68,6 @@
             </Border>
         </VerticalStackLayout>
 
-        <!--  Error Message Label  -->
-        <Label
-            FontFamily="InterMedium"
-            FontSize="14"
-            HorizontalOptions="Center"
-            HorizontalTextAlignment="Center"
-            IsVisible="{Binding Model.IsErrorVisible}"
-            Text="{Binding Model.ErrorMessage}"
-            TextColor="Red" />
-
         <!--  Sign Up Button  -->
         <Button
             Margin="0,20,0,20"
