@@ -21,7 +21,7 @@
             Style="{StaticResource BodyText}"
             Text="Sign in to your account" />
 
-        <!--  Email Field  -->
+
         <VerticalStackLayout Spacing="8">
             <Label Style="{StaticResource FormFieldLabel}" Text="Email Address" />
             <Border Style="{StaticResource FormFieldBorder}">
@@ -33,7 +33,7 @@
             </Border>
         </VerticalStackLayout>
 
-        <!--  Password Field  -->
+
         <VerticalStackLayout Spacing="8">
             <Label Style="{StaticResource FormFieldLabel}" Text="Password" />
             <Border Style="{StaticResource FormFieldBorder}">
@@ -45,9 +45,7 @@
             </Border>
         </VerticalStackLayout>
 
-        <!-- Removed inline error label: use toast notifications only -->
 
-        <!--  Forgot Password Link  -->
         <Label
             Margin="0,0,0,10"
             FontFamily="InterMedium"
@@ -60,19 +58,23 @@
             </Label.GestureRecognizers>
         </Label>
 
-        <!--  Login Button  -->
+
         <Button
-            Margin="0,10,0,20"
+            Margin="0,10,0,10"
             BackgroundColor="Black"
             Command="{Binding LoginCommand}"
             CornerRadius="20"
             FontFamily="InterBold"
             HeightRequest="60"
+            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
             Text="Login"
             TextColor="White"
             TextTransform="None" />
 
-        <!--  Create Account Link  -->
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+
         <Label FontSize="15" HorizontalOptions="Center">
             <Label.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding NavigateToSignUpCommand}" />

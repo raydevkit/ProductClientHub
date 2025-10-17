@@ -3,9 +3,8 @@ using ProductClientHub.App.ViewModels.Pages.Dashboard;
 
 namespace ProductClientHub.App.Validation;
 
-public class DashboardCreateClientValidator : AbstractValidator<DashboardViewModel>
+public sealed partial class DashboardCreateClientValidator : AbstractValidator<DashboardViewModel>
 {
-    // Same rules as API RequestClientValidator
     public DashboardCreateClientValidator()
     {
         RuleFor(x => x.NewClient.Name)
@@ -14,7 +13,7 @@ public class DashboardCreateClientValidator : AbstractValidator<DashboardViewMod
 
         RuleFor(x => x.NewClient.LastName)
             .NotEmpty().WithMessage("Last name is required.")
-            .MaximumLength(100).WithMessage("Name must not exceed 100 characters.");
+            .MaximumLength(100).WithMessage("Last name must not exceed 100 characters.");
 
         RuleFor(x => x.NewClient.Email)
             .EmailAddress().WithMessage("Invalid email format.");
@@ -27,7 +26,7 @@ public class DashboardCreateClientValidator : AbstractValidator<DashboardViewMod
     }
 }
 
-public class ClientItemEditValidator : AbstractValidator<ClientItemViewModel>
+public sealed partial class ClientItemEditValidator : AbstractValidator<ClientItemViewModel>
 {
     public ClientItemEditValidator()
     {
@@ -37,7 +36,7 @@ public class ClientItemEditValidator : AbstractValidator<ClientItemViewModel>
 
         RuleFor(x => x.LastName)
             .NotEmpty().WithMessage("Last name is required.")
-            .MaximumLength(100).WithMessage("Name must not exceed 100 characters.");
+            .MaximumLength(100).WithMessage("Last name must not exceed 100 characters.");
 
         RuleFor(x => x.Email)
             .EmailAddress().WithMessage("Invalid email format.");
@@ -50,7 +49,7 @@ public class ClientItemEditValidator : AbstractValidator<ClientItemViewModel>
     }
 }
 
-public class ClientItemCreateProductValidator : AbstractValidator<ClientItemViewModel>
+public sealed partial class ClientItemCreateProductValidator : AbstractValidator<ClientItemViewModel>
 {
     public ClientItemCreateProductValidator()
     {
