@@ -7,56 +7,52 @@ using ProductClientHub.App.Validation;
 
 namespace ProductClientHub.App.ViewModels.Pages.SignUp;
 
-public partial class SignUpViewModel : ObservableObject
+public partial class SignUpViewModel(
+    INavigationService navigationService,
+    IRegisterUserUseCase registerUserUseCase,
+    IErrorNotifier notifier) : ObservableObject
 {
     private readonly SignUpViewModelValidator _validator = new();
-    private readonly INavigationService _navigationService;
-    private readonly IRegisterUserUseCase _registerUserUseCase;
-    private readonly IErrorNotifier _notifier;
 
     [ObservableProperty]
     private Models.SignUp model = new();
 
-    public SignUpViewModel(INavigationService navigationService, IRegisterUserUseCase registerUserUseCase, IErrorNotifier notifier)
-    {
-        _navigationService = navigationService;
-        _registerUserUseCase = registerUserUseCase;
-        _notifier = notifier;
-    }
+    
+    [ObservableProperty]
+    private bool isBusy;
 
     [RelayCommand]
     public async Task SignUp()
     {
-        // Validate using FluentValidation
-        var validationResult = await _validator.ValidateAsync(this);
-        if (!validationResult.IsValid)
-        {
-            await _notifier.ShowError(validationResult.Errors.First().ErrorMessage);
-            return;
-        }
-
+        if (IsBusy) return;
+        IsBusy = true;
         try
         {
-            await _registerUserUseCase.Execute(Model);
-            var windows = Application.Current?.Windows;
-            if (windows is { Count: > 0 })
+            
+            var validationResult = await _validator.ValidateAsync(this);
+            if (!validationResult.IsValid)
             {
-                var mainPage = windows[0]?.Page;
-                if (mainPage != null)
-                {
-                    await mainPage.DisplayAlertAsync("Success", "Account created successfully!", "OK");
-                }
+                await notifier.ShowError(validationResult.Errors.First().ErrorMessage);
+                return;
             }
+
+            await registerUserUseCase.Execute(Model);
+            await notifier.ShowSuccess("Account created successfully!");
+            await navigationService.GoToAsync(RoutePages.LOGIN_PAGE);
         }
-        catch (Exception ex)
+        catch
         {
-            await _notifier.ShowError($"Sign up failed: {ex.Message}");
+            
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
     [RelayCommand]
     private async Task NavigateToLogin()
     {
-        await _navigationService.GoToAsync(RoutePages.LOGIN_PAGE);
+        await navigationService.GoToAsync(RoutePages.LOGIN_PAGE);
     }
 }

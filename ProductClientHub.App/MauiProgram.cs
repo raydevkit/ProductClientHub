@@ -87,7 +87,7 @@ namespace ProductClientHub.App
         {
             var apiUrl = appBuilder.Configuration.GetValue<string>("ApiUrl")!;
 
-            // token store + auth handler
+            
             appBuilder.Services.AddSingleton<ITokenStore, SecureTokenStore>();
             appBuilder.Services.AddTransient<AuthHeaderHandler>();
 
@@ -117,10 +117,11 @@ namespace ProductClientHub.App
 
         private static MauiAppBuilder AddValidation(this MauiAppBuilder appBuilder)
         {
-            // error notifier
+            
             appBuilder.Services.AddSingleton<IErrorNotifier, ErrorNotifier>();
+            appBuilder.Services.AddSingleton<IApiErrorHandler, ApiErrorHandler>();
 
-            // validators
+            
             appBuilder.Services.AddTransient<LoginViewModelValidator>();
             appBuilder.Services.AddTransient<SignUpViewModelValidator>();
             appBuilder.Services.AddTransient<DashboardCreateClientValidator>();

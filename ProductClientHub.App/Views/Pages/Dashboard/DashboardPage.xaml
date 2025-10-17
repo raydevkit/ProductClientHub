@@ -1,121 +1,285 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="ProductClientHub.App.Views.Pages.Dashboard.DashboardPage"
-             Title="Dashboard"
-             Shell.NavBarIsVisible="True">
-    <Grid RowDefinitions="Auto, *" Padding="16">
-        <!-- Inline create client section -->
-        <VerticalStackLayout Spacing="8">
-            <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center" HeightRequest="36">
-                <Label Text="Clients" FontFamily="InterBold" FontSize="20" VerticalOptions="Center"/>
-                <ImageButton Grid.Column="1" Source="plus_solid_full_icon.svg" Style="{StaticResource IconButton}" BackgroundColor="#10B981"
-                             HorizontalOptions="End" CornerRadius="18" WidthRequest="36" HeightRequest="36"
-                             Command="{Binding ToggleCreateClientCommand}"/>
-            </Grid>
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"/>
+<ContentPage
+    x:Class="ProductClientHub.App.Views.Pages.Dashboard.DashboardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    Title="Dashboard"
+    Shell.NavBarIsVisible="True">
+    <Grid Padding="16" RowDefinitions="Auto, *">
 
-            <Grid IsVisible="{Binding IsCreateClientVisible}" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,*" Padding="12" BackgroundColor="#F7F7F7">
-                <Entry Grid.Row="0" Grid.ColumnSpan="2" Placeholder="Last Name" Text="{Binding NewClient.LastName}"/>
-                <Entry Grid.Row="1" Grid.ColumnSpan="2" Placeholder="Name" Text="{Binding NewClient.Name}"/>
-                <Entry Grid.Row="2" Grid.ColumnSpan="2" Placeholder="Email" Text="{Binding NewClient.Email}"/>
-                <Entry Grid.Row="3" Grid.ColumnSpan="2" Placeholder="Codice Fiscale" Text="{Binding NewClient.CodiceFiscale}"/>
-                <!-- Buttons row aligned center using a HorizontalStackLayout to avoid overlay and keep spacing consistent -->
-                <HorizontalStackLayout Grid.Row="4" Spacing="12" HorizontalOptions="Center" Margin="0,8,0,0">
-                    <Button Text="Create" Command="{Binding CreateClientCommand}" Style="{StaticResource SmallButton}"/>
-                    <Button Text="Cancel" Command="{Binding ToggleCreateClientCommand}" Style="{StaticResource SmallButton}"/>
+        <VerticalStackLayout Spacing="8">
+            <Grid
+                ColumnDefinitions="*,Auto"
+                HeightRequest="36"
+                VerticalOptions="Center">
+                <Label
+                    FontFamily="InterBold"
+                    FontSize="20"
+                    Text="Clients"
+                    VerticalOptions="Center" />
+                <ImageButton
+                    Grid.Column="1"
+                    BackgroundColor="#10B981"
+                    Command="{Binding ToggleCreateClientCommand}"
+                    CornerRadius="18"
+                    HeightRequest="36"
+                    HorizontalOptions="End"
+                    Source="plus_solid_full_icon.svg"
+                    Style="{StaticResource IconButton}"
+                    WidthRequest="36" />
+            </Grid>
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+            <Grid
+                Padding="12"
+                BackgroundColor="#F7F7F7"
+                ColumnDefinitions="*,*"
+                IsVisible="{Binding IsCreateClientVisible}"
+                RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                <Entry
+                    Grid.Row="0"
+                    Grid.ColumnSpan="2"
+                    Placeholder="Last Name"
+                    Text="{Binding NewClient.LastName}" />
+                <Entry
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Placeholder="Name"
+                    Text="{Binding NewClient.Name}" />
+                <Entry
+                    Grid.Row="2"
+                    Grid.ColumnSpan="2"
+                    Placeholder="Email"
+                    Text="{Binding NewClient.Email}" />
+                <Entry
+                    Grid.Row="3"
+                    Grid.ColumnSpan="2"
+                    Placeholder="Codice Fiscale"
+                    Text="{Binding NewClient.CodiceFiscale}" />
+
+                <HorizontalStackLayout
+                    Grid.Row="4"
+                    Margin="0,8,0,0"
+                    HorizontalOptions="Center"
+                    Spacing="12">
+                    <Button
+                        Command="{Binding CreateClientCommand}"
+                        Style="{StaticResource SmallButton}"
+                        Text="Create" />
+                    <Button
+                        Command="{Binding ToggleCreateClientCommand}"
+                        Style="{StaticResource SmallButton}"
+                        Text="Cancel" />
                 </HorizontalStackLayout>
             </Grid>
         </VerticalStackLayout>
 
-        <!-- Clients list -->
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Clients}" SelectionMode="None">
+
+        <CollectionView
+            Grid.Row="1"
+            ItemsSource="{Binding Clients}"
+            SelectionMode="None">
             <CollectionView.EmptyView>
-                <Label Text="No clients yet." HorizontalOptions="Center" VerticalOptions="Center"/>
+                <Label
+                    HorizontalOptions="Center"
+                    Text="No clients yet."
+                    VerticalOptions="Center" />
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="0,8">
-                        <Border Stroke="#EEE" StrokeThickness="1" BackgroundColor="White" StrokeShape="RoundRectangle 12">
+                        <Border
+                            BackgroundColor="White"
+                            Stroke="#EEE"
+                            StrokeShape="RoundRectangle 12"
+                            StrokeThickness="1">
                             <toolkit:Expander IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
                                 <toolkit:Expander.Header>
-                                    <!-- Header row with centered name and compact icons -->
-                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" Padding="12" HeightRequest="44" VerticalOptions="Center">
-                                        <Image Source="user_solid_full_icon.svg" Style="{StaticResource IconImage}"/>
-                                        <Label Grid.Column="1" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center">
+
+                                    <Grid
+                                        Padding="12"
+                                        ColumnDefinitions="Auto,*,Auto,Auto"
+                                        HeightRequest="44"
+                                        VerticalOptions="Center">
+                                        <Image Source="user_solid_full_icon.svg" Style="{StaticResource IconImage}" />
+                                        <Label
+                                            Grid.Column="1"
+                                            HorizontalOptions="Center"
+                                            HorizontalTextAlignment="Center"
+                                            VerticalOptions="Center">
                                             <Label.FormattedText>
                                                 <FormattedString>
-                                                    <Span Text="{Binding LastName}"/>
-                                                    <Span Text=" "/>
-                                                    <Span Text="{Binding Name}"/>
+                                                    <Span Text="{Binding LastName}" />
+                                                    <Span Text=" " />
+                                                    <Span Text="{Binding Name}" />
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>
-                                        <ImageButton Grid.Column="2" Source="edit_icon.svg" Style="{StaticResource IconButton}" Command="{Binding ToggleEditCommand}"/>
-                                        <ImageButton Grid.Column="3" Source="trash_solid_full_icon.svg" Style="{StaticResource IconButton}" Command="{Binding DeleteClientCommand}"/>
+                                        <ImageButton
+                                            Grid.Column="2"
+                                            Command="{Binding ToggleEditCommand}"
+                                            Source="edit_icon.svg"
+                                            Style="{StaticResource IconButton}" />
+                                        <ImageButton
+                                            Grid.Column="3"
+                                            Command="{Binding DeleteClientCommand}"
+                                            Source="trash_solid_full_icon.svg"
+                                            Style="{StaticResource IconButton}" />
                                     </Grid>
                                 </toolkit:Expander.Header>
 
-                                <VerticalStackLayout Spacing="8" Padding="12,0,12,12">
-                                    <!-- Expanded details: each row has its own 2-col grid so values start right after its label -->
+                                <VerticalStackLayout Padding="12,0,12,12" Spacing="8">
+
                                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-                                        <Label Text="Email:" FontFamily="InterMedium"/>
-                                        <Label Grid.Column="1" Text="{Binding Email}" LineBreakMode="TailTruncation" MaxLines="1"/>
+                                        <Label FontFamily="InterMedium" Text="Email:" />
+                                        <Label
+                                            Grid.Column="1"
+                                            LineBreakMode="TailTruncation"
+                                            MaxLines="1"
+                                            Text="{Binding Email}" />
                                     </Grid>
                                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-                                        <Label Text="Codice Fiscale:" FontFamily="InterMedium"/>
-                                        <Label Grid.Column="1" Text="{Binding CodiceFiscale}"/>
+                                        <Label FontFamily="InterMedium" Text="Codice Fiscale:" />
+                                        <Label Grid.Column="1" Text="{Binding CodiceFiscale}" />
                                     </Grid>
                                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-                                        <Label Text="Id:" FontFamily="InterMedium"/>
-                                        <Label Grid.Column="1" Text="{Binding Id}" LineBreakMode="TailTruncation" MaxLines="1"/>
+                                        <Label FontFamily="InterMedium" Text="Id:" />
+                                        <Label
+                                            Grid.Column="1"
+                                            LineBreakMode="TailTruncation"
+                                            MaxLines="1"
+                                            Text="{Binding Id}" />
                                     </Grid>
 
-                                    <!-- Inline edit -->
-                                    <Grid IsVisible="{Binding IsEditing}" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" Padding="8" BackgroundColor="#FAFAFA">
-                                        <Entry Grid.Row="0" Grid.ColumnSpan="2" Placeholder="Last Name" Text="{Binding LastName}"/>
-                                        <Entry Grid.Row="1" Grid.ColumnSpan="2" Placeholder="Name" Text="{Binding Name}"/>
-                                        <Entry Grid.Row="2" Grid.ColumnSpan="2" Placeholder="Email" Text="{Binding Email}"/>
-                                        <Entry Grid.Row="3" Grid.ColumnSpan="2" Placeholder="Codice Fiscale" Text="{Binding CodiceFiscale}"/>
-                                        <!-- Keep action buttons aligned center and spaced -->
-                                        <HorizontalStackLayout Grid.Row="4" Spacing="12" HorizontalOptions="Center" Margin="0,8,0,0">
-                                            <Button Text="Save" Command="{Binding SaveEditCommand}" Style="{StaticResource SmallButton}"/>
-                                            <Button Text="Cancel" Command="{Binding ToggleEditCommand}" Style="{StaticResource SmallButton}"/>
+
+                                    <Grid
+                                        Padding="8"
+                                        BackgroundColor="#FAFAFA"
+                                        ColumnDefinitions="*,*"
+                                        IsVisible="{Binding IsEditing}"
+                                        RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <Entry
+                                            Grid.Row="0"
+                                            Grid.ColumnSpan="2"
+                                            Placeholder="Last Name"
+                                            Text="{Binding LastName}" />
+                                        <Entry
+                                            Grid.Row="1"
+                                            Grid.ColumnSpan="2"
+                                            Placeholder="Name"
+                                            Text="{Binding Name}" />
+                                        <Entry
+                                            Grid.Row="2"
+                                            Grid.ColumnSpan="2"
+                                            Placeholder="Email"
+                                            Text="{Binding Email}" />
+                                        <Entry
+                                            Grid.Row="3"
+                                            Grid.ColumnSpan="2"
+                                            Placeholder="Codice Fiscale"
+                                            Text="{Binding CodiceFiscale}" />
+
+                                        <HorizontalStackLayout
+                                            Grid.Row="4"
+                                            Margin="0,8,0,0"
+                                            HorizontalOptions="Center"
+                                            Spacing="12">
+                                            <Button
+                                                Command="{Binding SaveEditCommand}"
+                                                Style="{StaticResource SmallButton}"
+                                                Text="Save" />
+                                            <Button
+                                                Command="{Binding ToggleEditCommand}"
+                                                Style="{StaticResource SmallButton}"
+                                                Text="Cancel" />
                                         </HorizontalStackLayout>
                                     </Grid>
 
-                                    <!-- Products list -->
-                                    <Label Text="Products" FontFamily="InterBold" Margin="0,10,0,0"/>
-                                    <CollectionView x:Name="ProductsList" ItemsSource="{Binding Products}" SelectionMode="None">
+
+                                    <Label
+                                        Margin="0,10,0,0"
+                                        FontFamily="InterBold"
+                                        Text="Products" />
+                                    <CollectionView
+                                        x:Name="ProductsList"
+                                        ItemsSource="{Binding Products}"
+                                        SelectionMode="None">
                                         <CollectionView.ItemTemplate>
                                             <DataTemplate>
-                                                <!-- Use 4 columns to avoid overlap: Name | Brand | Price | Delete -->
-                                                <Grid ColumnDefinitions="*,Auto,Auto,Auto" Padding="4,0" ColumnSpacing="12" VerticalOptions="Center">
-                                                    <Label Grid.Column="0" Text="{Binding Name}"/>
-                                                    <Label Grid.Column="1" Text="{Binding Brand}" HorizontalOptions="End"/>
-                                                    <Label Grid.Column="2" Text="{Binding Price, StringFormat='{}{0:C}'}" HorizontalOptions="End"/>
-                                                    <ImageButton Grid.Column="3" Source="trash_solid_full_icon.svg" Style="{StaticResource IconButton}"
-                                                                 Command="{Binding Path=BindingContext.DeleteProductCommand, Source={x:Reference ProductsList}}"
-                                                                 CommandParameter="{Binding Id}"/>
+
+                                                <Grid
+                                                    Padding="4,0"
+                                                    ColumnDefinitions="*,Auto,Auto,Auto"
+                                                    ColumnSpacing="12"
+                                                    VerticalOptions="Center">
+                                                    <Label Grid.Column="0" Text="{Binding Name}" />
+                                                    <Label
+                                                        Grid.Column="1"
+                                                        HorizontalOptions="End"
+                                                        Text="{Binding Brand}" />
+                                                    <Label
+                                                        Grid.Column="2"
+                                                        HorizontalOptions="End"
+                                                        Text="{Binding Price, StringFormat='{}{0:C}'}" />
+                                                    <ImageButton
+                                                        Grid.Column="3"
+                                                        Command="{Binding Path=BindingContext.DeleteProductCommand, Source={x:Reference ProductsList}}"
+                                                        CommandParameter="{Binding Id}"
+                                                        Source="trash_solid_full_icon.svg"
+                                                        Style="{StaticResource IconButton}" />
                                                 </Grid>
                                             </DataTemplate>
                                         </CollectionView.ItemTemplate>
                                     </CollectionView>
 
-                                    <!-- Inline add product button centered -->
-                                    <Grid ColumnDefinitions="Auto" HorizontalOptions="Center" Margin="0,8,0,0">
-                                        <Button Text="Add Product" Command="{Binding ToggleCreateProductCommand}" Style="{StaticResource SmallButton}"/>
+
+                                    <Grid
+                                        Margin="0,8,0,0"
+                                        ColumnDefinitions="Auto"
+                                        HorizontalOptions="Center">
+                                        <Button
+                                            Command="{Binding ToggleCreateProductCommand}"
+                                            Style="{StaticResource SmallButton}"
+                                            Text="Add Product" />
                                     </Grid>
 
-                                    <!-- Inline create product form, ensure no overlay and buttons centered -->
-                                    <Grid IsVisible="{Binding IsCreateProductVisible}" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" Padding="8" BackgroundColor="#FAFAFA">
-                                        <Entry Grid.Row="0" Grid.ColumnSpan="2" Placeholder="Product Name" Text="{Binding NewProductName}"/>
-                                        <Entry Grid.Row="1" Grid.ColumnSpan="2" Placeholder="Brand" Text="{Binding NewProductBrand}"/>
-                                        <Entry Grid.Row="2" Grid.ColumnSpan="2" Placeholder="Price" Text="{Binding NewProductPrice}" Keyboard="Numeric"/>
-                                        <HorizontalStackLayout Grid.Row="3" Spacing="12" HorizontalOptions="Center" Margin="0,8,0,0">
-                                            <Button Text="Create" Command="{Binding CreateProductCommand}" Style="{StaticResource SmallButton}"/>
-                                            <Button Text="Cancel" Command="{Binding ToggleCreateProductCommand}" Style="{StaticResource SmallButton}"/>
+
+                                    <Grid
+                                        Padding="8"
+                                        BackgroundColor="#FAFAFA"
+                                        ColumnDefinitions="*,*"
+                                        IsVisible="{Binding IsCreateProductVisible}"
+                                        RowDefinitions="Auto,Auto,Auto,Auto">
+                                        <Entry
+                                            Grid.Row="0"
+                                            Grid.ColumnSpan="2"
+                                            Placeholder="Product Name"
+                                            Text="{Binding NewProductName}" />
+                                        <Entry
+                                            Grid.Row="1"
+                                            Grid.ColumnSpan="2"
+                                            Placeholder="Brand"
+                                            Text="{Binding NewProductBrand}" />
+                                        <Entry
+                                            Grid.Row="2"
+                                            Grid.ColumnSpan="2"
+                                            Keyboard="Numeric"
+                                            Placeholder="Price"
+                                            Text="{Binding NewProductPrice}" />
+                                        <HorizontalStackLayout
+                                            Grid.Row="3"
+                                            Margin="0,8,0,0"
+                                            HorizontalOptions="Center"
+                                            Spacing="12">
+                                            <Button
+                                                Command="{Binding CreateProductCommand}"
+                                                Style="{StaticResource SmallButton}"
+                                                Text="Create" />
+                                            <Button
+                                                Command="{Binding ToggleCreateProductCommand}"
+                                                Style="{StaticResource SmallButton}"
+                                                Text="Cancel" />
                                         </HorizontalStackLayout>
                                     </Grid>
                                 </VerticalStackLayout>

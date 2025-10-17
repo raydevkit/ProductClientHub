@@ -15,44 +15,21 @@ using ProductClientHub.Communication.Responses;
 
 namespace ProductClientHub.App.ViewModels.Pages.Dashboard;
 
-public partial class DashboardViewModel : ObservableObject
+public partial class DashboardViewModel(
+    IGetAllClientsUseCase getAllClients,
+    IGetClientByIdUseCase getClientById,
+    ICreateClientUseCase createClient,
+    IUpdateClientUseCase updateClient,
+    IDeleteClientUseCase deleteClient,
+    ICreateProductUseCase createProduct,
+    IDeleteProductUseCase deleteProduct,
+    IErrorNotifier notifier,
+    DashboardCreateClientValidator createClientValidator) : ObservableObject
 {
-    private readonly IGetAllClientsUseCase _getAllClients;
-    private readonly IGetClientByIdUseCase _getClientById;
-    private readonly ICreateClientUseCase _createClient;
-    private readonly IUpdateClientUseCase _updateClient;
-    private readonly IDeleteClientUseCase _deleteClient;
-    private readonly ICreateProductUseCase _createProduct;
-    private readonly IDeleteProductUseCase _deleteProduct;
-    private readonly IErrorNotifier _notifier;
-    private readonly DashboardCreateClientValidator _createClientValidator;
-
     [ObservableProperty]
     private bool isBusy;
 
-    public ObservableCollection<ClientItemViewModel> Clients { get; } = new();
-
-    public DashboardViewModel(
-        IGetAllClientsUseCase getAllClients,
-        IGetClientByIdUseCase getClientById,
-        ICreateClientUseCase createClient,
-        IUpdateClientUseCase updateClient,
-        IDeleteClientUseCase deleteClient,
-        ICreateProductUseCase createProduct,
-        IDeleteProductUseCase deleteProduct,
-        IErrorNotifier notifier,
-        DashboardCreateClientValidator createClientValidator)
-    {
-        _getAllClients = getAllClients;
-        _getClientById = getClientById;
-        _createClient = createClient;
-        _updateClient = updateClient;
-        _deleteClient = deleteClient;
-        _createProduct = createProduct;
-        _deleteProduct = deleteProduct;
-        _notifier = notifier;
-        _createClientValidator = createClientValidator;
-    }
+    public ObservableCollection<ClientItemViewModel> Clients { get; } = [];
 
     [RelayCommand]
     public async Task Load()
@@ -62,23 +39,23 @@ public partial class DashboardViewModel : ObservableObject
         try
         {
             Clients.Clear();
-            var items = await _getAllClients.Execute();
+            var items = await getAllClients.Execute();
 
-            // Build VMs first, add to collection, then prefetch details in parallel
-            var vms = new List<ClientItemViewModel>(items.Count);
+            
+            var vms = new List<ClientItemViewModel>();
             foreach (var c in items)
             {
-                var vm = new ClientItemViewModel(c.Id, c.LastName, c.Name, _getClientById, _updateClient, _deleteClient, _createProduct, _deleteProduct, _notifier);
-                vms.Add(vm);
+                var vm = new ClientItemViewModel(c.Id, c.LastName, c.Name, getClientById, updateClient, deleteClient, createProduct, deleteProduct, notifier);
                 Clients.Add(vm);
+                vms.Add(vm);
             }
 
-            // Prefetch full details so email, codice fiscale and products are ready before tapping
+         
             await Task.WhenAll(vms.Select(vm => vm.PrefetchDetailsAsync()));
         }
-        catch (Exception ex)
+        catch
         {
-            await _notifier.ShowError(ex.Message);
+            // Error already handled and displayed by UseCase
         }
         finally
         {
@@ -86,7 +63,7 @@ public partial class DashboardViewModel : ObservableObject
         }
     }
 
-    // Inline create client form state
+    
     [ObservableProperty]
     private bool isCreateClientVisible;
 
@@ -99,30 +76,30 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task CreateClient()
     {
-        // validate
-        var validation = await _createClientValidator.ValidateAsync(this);
+        
+        var validation = await createClientValidator.ValidateAsync(this);
         if (!validation.IsValid)
         {
-            var msg = validation.Errors.First().ErrorMessage;
-            await _notifier.ShowError(msg);
+            var msg = validation.Errors[0].ErrorMessage;
+            await notifier.ShowError(msg);
             return;
         }
 
         try
         {
-            var created = await _createClient.Execute(NewClient);
-            // add to top and reset form
-            var vm = new ClientItemViewModel(created.Id, NewClient.LastName, NewClient.Name, _getClientById, _updateClient, _deleteClient, _createProduct, _deleteProduct, _notifier);
+            var created = await createClient.Execute(NewClient);
+            var vm = new ClientItemViewModel(created.Id, NewClient.LastName, NewClient.Name, getClientById, updateClient, deleteClient, createProduct, deleteProduct, notifier);
             Clients.Insert(0, vm);
-            // Prefetch the just-created client's details (if API returns them later)
             _ = vm.PrefetchDetailsAsync();
 
             NewClient = new();
             IsCreateClientVisible = false;
+            
+            await notifier.ShowSuccess("Client created successfully!");
         }
-        catch (Exception ex)
+        catch
         {
-            await _notifier.ShowError(ex.Message);
+           
         }
     }
 }
@@ -158,7 +135,7 @@ public partial class ClientItemViewModel : ObservableObject
     [ObservableProperty]
     private string codiceFiscale = string.Empty;
 
-    public ObservableCollection<ResponseShortProductJson> Products { get; } = new();
+    public ObservableCollection<ResponseShortProductJson> Products { get; } = [];
 
     // Inline product creation
     [ObservableProperty]
@@ -194,7 +171,6 @@ public partial class ClientItemViewModel : ObservableObject
         _productValidator = new ClientItemCreateProductValidator();
     }
 
-    // Called automatically by MVVM Toolkit when IsExpanded changes
     partial void OnIsExpandedChanged(bool value)
     {
         if (value)
@@ -203,7 +179,6 @@ public partial class ClientItemViewModel : ObservableObject
         }
     }
 
-    // Also ensure toggling edit expands section and loads details if needed
     partial void OnIsEditingChanged(bool value)
     {
         if (value)
@@ -216,17 +191,23 @@ public partial class ClientItemViewModel : ObservableObject
         }
     }
 
-    // Public prefetch used by the parent VM
     public Task PrefetchDetailsAsync() => LoadDetailsAsync();
 
     private async Task LoadDetailsAsync()
     {
-        var details = await _getClientById.Execute(Id);
-        Email = details.Email;
-        CodiceFiscale = details.CodiceFiscale;
-        Products.Clear();
-        foreach (var p in details.Products)
-            Products.Add(p);
+        try
+        {
+            var details = await _getClientById.Execute(Id);
+            Email = details.Email;
+            CodiceFiscale = details.CodiceFiscale;
+            Products.Clear();
+            foreach (var p in details.Products)
+                Products.Add(p);
+        }
+        catch
+        {
+            
+        }
     }
 
     [RelayCommand]
@@ -238,14 +219,22 @@ public partial class ClientItemViewModel : ObservableObject
         var valid = await _editValidator.ValidateAsync(this);
         if (!valid.IsValid)
         {
-            var msg = valid.Errors.First().ErrorMessage;
+            var msg = valid.Errors[0].ErrorMessage;
             await _notifier.ShowError(msg);
             return;
         }
 
-        var req = new RequestClientJson { Name = Name, LastName = LastName, Email = Email, CodiceFiscale = CodiceFiscale };
-        await _updateClient.Execute(Id, req);
-        IsEditing = false;
+        try
+        {
+            var req = new RequestClientJson { Name = Name, LastName = LastName, Email = Email, CodiceFiscale = CodiceFiscale };
+            await _updateClient.Execute(Id, req);
+            IsEditing = false;
+            await _notifier.ShowSuccess("Client updated successfully!");
+        }
+        catch
+        {
+            
+        }
     }
 
     [RelayCommand]
@@ -258,8 +247,16 @@ public partial class ClientItemViewModel : ObservableObject
             var confirm = await mainPage.DisplayAlertAsync("Confirm", "Delete this client?", "Delete", "Cancel");
             if (!confirm) return;
         }
-        await _deleteClient.Execute(Id);
-        // let parent refresh list; usually we would raise an event
+        
+        try
+        {
+            await _deleteClient.Execute(Id);
+            await _notifier.ShowSuccess("Client deleted successfully!");
+        }
+        catch
+        {
+            
+        }
     }
 
     [RelayCommand]
@@ -271,18 +268,26 @@ public partial class ClientItemViewModel : ObservableObject
         var valid = await _productValidator.ValidateAsync(this);
         if (!valid.IsValid)
         {
-            var msg = valid.Errors.First().ErrorMessage;
+            var msg = valid.Errors[0].ErrorMessage;
             await _notifier.ShowError(msg);
             return;
         }
 
-        var req = new RequestProductJson { Name = NewProductName, Brand = NewProductBrand, Price = NewProductPrice };
-        var created = await _createProduct.Execute(Id, req);
-        Products.Add(created);
-        NewProductName = string.Empty;
-        NewProductBrand = string.Empty;
-        NewProductPrice = 0m;
-        IsCreateProductVisible = false;
+        try
+        {
+            var req = new RequestProductJson { Name = NewProductName, Brand = NewProductBrand, Price = NewProductPrice };
+            var created = await _createProduct.Execute(Id, req);
+            Products.Add(created);
+            NewProductName = string.Empty;
+            NewProductBrand = string.Empty;
+            NewProductPrice = 0m;
+            IsCreateProductVisible = false;
+            await _notifier.ShowSuccess("Product created successfully!");
+        }
+        catch
+        {
+            
+        }
     }
 
     [RelayCommand]
@@ -295,8 +300,17 @@ public partial class ClientItemViewModel : ObservableObject
             var confirm = await mainPage.DisplayAlertAsync("Confirm", "Delete this product?", "Delete", "Cancel");
             if (!confirm) return;
         }
-        await _deleteProduct.Execute(productId);
-        var toRemove = Products.FirstOrDefault(p => p.Id == productId);
-        if (toRemove != null) Products.Remove(toRemove);
+        
+        try
+        {
+            await _deleteProduct.Execute(productId);
+            var toRemove = Products.FirstOrDefault(p => p.Id == productId);
+            if (toRemove != null) Products.Remove(toRemove);
+            await _notifier.ShowSuccess("Product deleted successfully!");
+        }
+        catch
+        {
+            
+        }
     }
 }

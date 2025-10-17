@@ -21,7 +21,7 @@
             Style="{StaticResource BodyText}"
             Text="Join us and start managing your clients" />
 
-        <!--  Name Field  -->
+
         <VerticalStackLayout Margin="0,20,0,0" Spacing="8">
             <Label Style="{StaticResource FormFieldLabel}" Text="Full Name" />
             <Border Style="{StaticResource FormFieldBorder}">
@@ -32,7 +32,7 @@
             </Border>
         </VerticalStackLayout>
 
-        <!--  Email Field  -->
+
         <VerticalStackLayout Spacing="8">
             <Label Style="{StaticResource FormFieldLabel}" Text="Email Address" />
             <Border Style="{StaticResource FormFieldBorder}">
@@ -44,7 +44,7 @@
             </Border>
         </VerticalStackLayout>
 
-        <!--  Password Field  -->
+
         <VerticalStackLayout Spacing="8">
             <Label Style="{StaticResource FormFieldLabel}" Text="Password" />
             <Border Style="{StaticResource FormFieldBorder}">
@@ -56,7 +56,7 @@
             </Border>
         </VerticalStackLayout>
 
-        <!--  Confirm Password Field  -->
+
         <VerticalStackLayout Spacing="8">
             <Label Style="{StaticResource FormFieldLabel}" Text="Confirm Password" />
             <Border Style="{StaticResource FormFieldBorder}">
@@ -68,19 +68,23 @@
             </Border>
         </VerticalStackLayout>
 
-        <!--  Sign Up Button  -->
+
         <Button
-            Margin="0,20,0,20"
+            Margin="0,20,0,10"
             BackgroundColor="Black"
             Command="{Binding SignUpCommand}"
             CornerRadius="20"
             FontFamily="InterBold"
             HeightRequest="60"
+            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
             Text="Create Account"
             TextColor="White"
             TextTransform="None" />
 
-        <!--  Already have account  -->
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+
         <Label FontSize="15" HorizontalOptions="Center">
             <Label.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding NavigateToLoginCommand}" />
@@ -90,7 +94,7 @@
                     <Span FontFamily="InterMedium" Text="Already have an account?" />
                     <Span Text=" " />
                     <Span
-                        FontFamily="InterBold"
+                        FontFamily="{StaticResource InterBold}"
                         Text="Login here"
                         TextColor="#7237BA" />
                 </FormattedString>
