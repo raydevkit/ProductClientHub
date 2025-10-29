@@ -120,7 +120,7 @@ All endpoints (except `register` and `login`) require Bearer authentication (`[A
 
 ## Notes and limitations
 - The DB path is hardcoded in `ProductClientHubDBContext`.
-- Use cases instantiate `ProductClientHubDBContext` directly (no DI). Consider refactoring to use dependency injection and `AddDbContext`.
+- Use cases instantiate `ProductClientHubDBContext` directly (no DI). 
 - Migrations/seeding are not included.
 - `LogoutUseCase` is a no-op (stateless JWT). Consider token blacklisting if needed.
 
